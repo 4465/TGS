@@ -1,13 +1,11 @@
 C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\bin\Debug\SC03.exe.config
 C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\bin\Debug\SC03.exe
-C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\obj\Debug\AS.g.cs
 C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\obj\Debug\Login.g.cs
 C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\obj\Debug\Server.g.cs
 C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\obj\Debug\TGS.g.cs
 C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\obj\Debug\App.g.cs
 C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\obj\Debug\SC03_MarkupCompile.cache
 C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\obj\Debug\SC03_MarkupCompile.lref
-C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\obj\Debug\AS.baml
 C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\obj\Debug\Login.baml
 C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\obj\Debug\Server.baml
 C:\Users\Administrator\Desktop\lwf\security\c#\Kerberos\SC03\obj\Debug\TGS.baml

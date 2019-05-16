@@ -38,7 +38,7 @@ namespace SC03
         }
 
         //侦听客户连接请求
-        public void runAs()
+        public void runTGS()
         {
             while (true)
             {
@@ -112,7 +112,7 @@ namespace SC03
         private void Init(object sender, RoutedEventArgs e)
         {
             listener = getListener(ip, port);
-            Thread thread = new Thread(new ThreadStart(runAs));
+            Thread thread = new Thread(new ThreadStart(runTGS));
             thread.Start();
         }
 

@@ -54,9 +54,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AS.xaml.cs">
-      <DependentUpon>AS.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Message.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Server.xaml.cs">
@@ -66,10 +63,6 @@
       <DependentUpon>TGS.xaml</DependentUpon>
     </Compile>
     <Compile Include="Ticket.cs" />
-    <Page Include="AS.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Login.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
