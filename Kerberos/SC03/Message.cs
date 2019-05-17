@@ -145,7 +145,8 @@ namespace SC03
             string tail = message.Substring(11, message.Length - 11);
             //ticket 12345678 LWW 1111 192.168.43.193 1111 TGS2019/05/11 16:37:591000
             string[] str_tkt = Regex.Split(tail, "####", RegexOptions.IgnoreCase);
-            string str_des_key = str_tkt[0].Substring(0, 8);
+            //AS生成，TGS与C共享的会话密钥，用来加密TGS发送给给C的整体报文
+            string str_des_key = str_tkt[0].Substring(0, 8);  
             string str_IDc = str_tkt[0].Substring(8, 3);
             string str_ADC_tkt = str_tkt[1];
             string str_IDtgs = str_tkt[2].Substring(0, 3);  //3
@@ -154,7 +155,6 @@ namespace SC03
             string tkt = str_des_key + str_IDc + str_ADC_tkt + str_IDtgs + str_TS2 + str_lifetime1;
             //300003SER12345678LWW1111192.168.43.1931111TGS2019/05/11 16:37:591000LWW1111192.168.1.10311112019/05/11 16:38:26
             //消息尾
-
             string str_Aut_IDc = str_tkt[2].Substring(26, 3);
             string str_ADc = str_tkt[3];
             string str_TS3 = str_tkt[4];
@@ -177,10 +177,11 @@ namespace SC03
             Console.WriteLine("IDc:{0}", str_Aut_IDc);
             Console.WriteLine("ADc:{0}", str_ADc);
             Console.WriteLine("TS3:{0}", str_TS3);
-            string[] data = new string[3];
+            string[] data = new string[4];
             data[0] = "";
             data[1] = "";
             data[2] = "";
+            data[3] = "";
             int lifetime1 = Convert.ToInt32(str_lifetime1);
             //int lifetime1;
             lifetime1 = 9999;
@@ -206,19 +207,24 @@ namespace SC03
                         Console.WriteLine("确认成功");
                         Console.WriteLine("TGS发送给Client密文:{0}", Encoding.ASCII.GetString(tgs.msg4_tgs));
                         string message_tgs = Encoding.ASCII.GetString(tgs.msg4_tgs);
-                        string De_msg4_tgs = msg.Decrypt(message_tgs.Substring(6, message_tgs.Length - 6), "12345678");
+                        //用str_des_key解密
+                        string De_msg4_tgs = msg.Decrypt(message_tgs.Substring(6, message_tgs.Length - 6), str_des_key);
                         Console.WriteLine("Client解密:{0}", De_msg4_tgs);
                         //Console.WriteLine(De_msg4_tgs.Length);
                         //票据明文
                         string m_tkt = De_msg4_tgs.Substring(32, De_msg4_tgs.Length - 32);
                         Console.WriteLine("票据密文:{0}", m_tkt);
-                        //Console.WriteLine("票据明文:{0}", msg.Decrypt(De_msg4_tgs.Substring(32, De_msg4_tgs.Length - 32), "12345678"));
+                        //用TGS与V固定的密钥解密TGSyoSER
+                        
+                        //Console.WriteLine("票据明文:{0}",msg.Decrypt(m_tkt,TGStoSER))
+                        //Console.WriteLine("票据明文:{0}", msg.Decrypt(m_tkt, "TGStoSER"));
 
                         string msg4 = De_msg4_tgs.Substring(0, 31) + m_tkt;
                         string str_msg4 = Encoding.ASCII.GetString(tgs.msg4_tgs);
                         data[1] = msg4;   //message4全明文
                         data[2] = str_msg4;    //message4密文
-
+                        //
+                        data[3] = tgs.key_des_CV;
                         return data;
                     }
                     else
@@ -257,14 +263,19 @@ namespace SC03
             string message = mess.Substring(11, mess.Length - 11);
             Console.WriteLine(message);
             string[] msg = Regex.Split(message, "####", RegexOptions.IgnoreCase);
-            Console.WriteLine(msg[0]);
-            Console.WriteLine(msg[1]);
-            string msg0 = Msg.Decrypt(msg[0], "12345678");
-            int index = msg[1].IndexOf('\0');
-            int length = msg[1].Length;
-            string msg1 = Msg.Decrypt(msg[1].Remove(index,length-index), "12345678");
+            Console.WriteLine("Tickt_tgs:{0}",msg[0]);  
+            Console.WriteLine("Authenticator:{0}",msg[1]);
+            string msg0 = Msg.Decrypt(msg[0], "ASandTGS");
+            string str_des_key = msg0.Substring(0, 8);
+            Console.WriteLine("密钥:{0}", str_des_key);
+            //AS与TGS事先约定好的密钥
             
-
+            Console.WriteLine("msg0:{0}", msg0);
+            //int index = msg[1].IndexOf('\0');
+            //int length = msg[1].Length;
+            //str_des_key解密
+            string msg1 = Msg.Decrypt(msg[1], str_des_key);
+            Console.WriteLine("msg1:{0}", msg1);
             data[0] = "";
             //接收信息的全明文
             data[0] = mess.Substring(0, 11) + msg0 + msg1;
@@ -279,8 +290,5 @@ namespace SC03
             //data[3] = Msg.DeMsgFromClient(data[0])[3];
             return data;
         }
-
-
-
     }
 }

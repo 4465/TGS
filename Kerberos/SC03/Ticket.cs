@@ -17,6 +17,7 @@ namespace SC03
         public string msg4_password;
         public string data_tag;
         public byte[] msg4_tgs;
+        public string key_des_CV;
         Message msg = new Message();
         //生成报文，Key_tgs解析报文所得，是C与TGS共享的会话密钥，加密整个报文
         public TGSMessage(string Key_tgs, string IDs, DateTime TS4, string IDc, string ADc, long lifetime2)
@@ -38,13 +39,16 @@ namespace SC03
             this.data_tag = "04";
             this.msg4_IDs = msg.StringtoBytes(IDs);
             this.msg4_TS4 = msg.StringtoBytes(TS4.ToString("yyyy/MM/dd HH:mm:ss"));
-            //TGS生成，C与V共享的会话密钥
-            string str_des_CV = "12345678";
-            this.Ramdon_key_CV = GetRandomString(8);
+            //TGS生成，C与V共享的会话密钥，C用来解密V发送的报文
+            //
+            this.key_des_CV = GetRandomString(8);
+            Console.WriteLine("TGS生成,C与V共享的密钥:{0}",this.key_des_CV);
+            //事先和V约定好的密钥
+            string str_des_CV = "TGStoSER";
             this.msg4_tkt = Ticket(IDs, str_des_CV, IDc, ADc, lifetime2);
             List<byte> tgsMessage = new List<byte>();
             tgsMessage.AddRange(Encoding.ASCII.GetBytes(this.data_tag.ToString()));
-            tgsMessage.AddRange(Encoding.ASCII.GetBytes(str_des_CV));
+            tgsMessage.AddRange(Encoding.ASCII.GetBytes(this.key_des_CV));  //this.key_des_CV
             tgsMessage.AddRange(msg4_IDs);
             tgsMessage.AddRange(msg4_TS4);
             tgsMessage.AddRange(msg4_tkt);
@@ -54,7 +58,7 @@ namespace SC03
             //client与TGS加解密
             string str_Tk = Encoding.ASCII.GetString(Tk);
             //整个报文加密，key=12345678这是AS生成的，C和TGS之间共享的会话密钥 通过解析Ticket_tgs票据获得
-            string En_str_Tk = msg.Encrypt(str_Tk, "12345678");
+            string En_str_Tk = msg.Encrypt(str_Tk, Key_C_TGS);
             Tk = Encoding.ASCII.GetBytes(En_str_Tk);
             return Tk;
         }
@@ -74,8 +78,8 @@ namespace SC03
             ticket.AddRange(msg.StringtoBytes(lifetime2.ToString()));
             byte[] Tk = ticket.ToArray();
             string str_Tk = Encoding.ASCII.GetString(Tk);
-            //对票据进行加密  key = 12345678这是c和v之间约定的密钥
-            string En_str_Tk = msg.Encrypt(str_Tk, "12345678");
+            //对票据进行加密  key = 12345678这是c和v之间事先约定的密钥，固定不变
+            string En_str_Tk = msg.Encrypt(str_Tk, Key_C_S);//TGStoSER
             Tk = Encoding.ASCII.GetBytes(En_str_Tk);
             return Tk;
         }
