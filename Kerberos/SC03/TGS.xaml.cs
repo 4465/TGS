@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 
@@ -13,6 +14,7 @@ namespace SC03
     /// <summary>
     public partial class TGS : Window
     {
+        Message Msg = new Message();
         private Socket connection;
         private TcpListener listener;
         private IPAddress ip;
@@ -76,6 +78,7 @@ namespace SC03
                     //通过clientsocket接收数据
                     int num = myClientSocket.Receive(result);
                     this.Dispatcher.Invoke(new Action(() => { TB_recv_2.AppendText(Encoding.ASCII.GetString(result, 0, num)); }));
+                    
                     Thread sendThread = new Thread(SendMessage);
                     sendThread.Start(myClientSocket);
                     break;
@@ -91,12 +94,21 @@ namespace SC03
         }
         public void SendMessage(object clientSocket)
         {
-
+            string mess = Encoding.ASCII.GetString(result);
+            string message = mess.Substring(11, mess.Length - 11);
+            Console.WriteLine(message);
+            string[] msg = Regex.Split(message, "####", RegexOptions.IgnoreCase);
+            Console.WriteLine("Tickt_tgs:{0}", msg[0]);
+            Console.WriteLine("Authenticator:{0}", msg[1]);
+            string msg0 = Msg.Decrypt(msg[0], "ASandTGS");
+            string str_des_key = msg0.Substring(0, 8);
+            Console.WriteLine("密钥:{0}", str_des_key);
+            string[] Str = Msg.Authenticator(str_des_key,result);
             Socket myClientSocket = (Socket)clientSocket;
             IPEndPoint iprm = (IPEndPoint)connection.RemoteEndPoint;
             //this.Dispatcher.Invoke(new Action(() => { TB_send_1.AppendText(ssmg); }));
             //string sendStr = "40000WXSCd/8k4O7b8v2WbUJ+RGOuO/n4TD2S4adxWheNocrnQfkEfEtOkvlRochjKvOgVG7vILx0bKQEDTaDylPHTEioKwxy4oX2lsswZKKoy4aBOWEcepwPn9itkq7l0OE4VxXPH1PsMsjB8uxn2F9MXg == ";
-            string[] Str = msg.Authenticator(result);
+            
             string sendStr = Str[2];       //发送消息全秘文
             byte[] sendByte = Encoding.ASCII.GetBytes(sendStr);
             this.Dispatcher.Invoke(new Action(() => { TB_send_2.AppendText(sendStr); }));

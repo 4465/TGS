@@ -26,9 +26,7 @@ namespace SC03
         public MainWindow()
         {
             InitializeComponent();
-            LB.Items.Add("斗破苍穹");
-            LB.Items.Add("55575");
-            LB.Items.Add("1213");
+          
         }
 
         public void Print()
@@ -41,16 +39,13 @@ namespace SC03
             byte[] byteMsg = new byte[2];
             byteMsg[0] = 0x01;
             byteMsg[1] = 0x02;
-            TB_username.Text = Encoding.ASCII.GetString(byteMsg, 0, 2);
+           
             //TB_passwd.Text = byteMsg[1];
             Window tgs = new TGS();
             tgs.Show();
 
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            this.Dispatcher.Invoke(new Action(() => { TB_username.Text=LB.SelectedItem.ToString(); }));
-        }
+      
     }
 }
