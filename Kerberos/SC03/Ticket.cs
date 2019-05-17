@@ -40,7 +40,7 @@ namespace SC03
             this.msg4_IDs = msg.StringtoBytes(IDs);
             this.msg4_TS4 = msg.StringtoBytes(TS4.ToString("yyyy/MM/dd HH:mm:ss"));
             //TGS生成，C与V共享的会话密钥，C用来解密V发送的报文
-            //
+          
             this.key_des_CV = GetRandomString(8);
             Console.WriteLine("TGS生成,C与V共享的密钥:{0}",this.key_des_CV);
             //事先和V约定好的密钥

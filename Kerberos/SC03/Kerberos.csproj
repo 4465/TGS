@@ -54,6 +54,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dic.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Server.xaml.cs">

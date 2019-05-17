@@ -48,11 +48,12 @@ namespace SC03
                 connection = listener.AcceptSocket();
                 //在新线程中启动新的socket连接，每个socket等待，并保持连接
                 IPEndPoint iprm = (IPEndPoint)connection.RemoteEndPoint;
-                this.Dispatcher.Invoke(new Action(() => { TB_log.AppendText("远程主机:" + iprm.Address.ToString() + ":" + iprm.Port.ToString() + "连接上本机\r\n"); }));
-
+                this.Dispatcher.Invoke(new Action(() => { TB_log.AppendText(DateTime.Now.ToString() + "远程主机:" + iprm.Address.ToString() + ":" + iprm.Port.ToString() + "连接上本机\r\n"); }));
+               
                 Thread thread = new Thread(new ThreadStart(dealClient));
                 Thread myThread = new Thread(dealClient);
                 thread.Start();
+                
             }
         }
 
@@ -64,6 +65,7 @@ namespace SC03
             this.Dispatcher.Invoke(new Action(() => { TB_log.AppendText("准备接受消息！\n"); }));
             Thread receiveThread = new Thread(ReceiveMessage);
             receiveThread.Start(connection);
+            Thread.Sleep(1000);
         }
 
 
@@ -78,7 +80,8 @@ namespace SC03
                     //通过clientsocket接收数据
                     int num = myClientSocket.Receive(result);
                     this.Dispatcher.Invoke(new Action(() => { TB_recv_2.AppendText(Encoding.ASCII.GetString(result, 0, num)); }));
-                    
+
+                   
                     Thread sendThread = new Thread(SendMessage);
                     sendThread.Start(myClientSocket);
                     break;
@@ -101,9 +104,19 @@ namespace SC03
             Console.WriteLine("Tickt_tgs:{0}", msg[0]);
             Console.WriteLine("Authenticator:{0}", msg[1]);
             string msg0 = Msg.Decrypt(msg[0], "ASandTGS");
-            string str_des_key = msg0.Substring(0, 8);
+            string str_des_key = msg0.Substring(0, 8);  
             Console.WriteLine("密钥:{0}", str_des_key);
-            string[] Str = Msg.Authenticator(str_des_key,result);
+            string Aut = Msg.Decrypt(msg[1], str_des_key);
+            string IDc = Aut.Substring(0, 3);
+            if (!Dic.myDictionary.ContainsKey(IDc))
+            {
+                Dic.myDictionary.Add(IDc, str_des_key);
+            }
+            else
+            {
+                Dic.myDictionary[IDc] = str_des_key;   
+            }
+            string[] Str = Msg.Authenticator(IDc,result);
             Socket myClientSocket = (Socket)clientSocket;
             IPEndPoint iprm = (IPEndPoint)connection.RemoteEndPoint;
             //this.Dispatcher.Invoke(new Action(() => { TB_send_1.AppendText(ssmg); }));
@@ -114,7 +127,7 @@ namespace SC03
             this.Dispatcher.Invoke(new Action(() => { TB_send_2.AppendText(sendStr); }));
             this.Dispatcher.Invoke(new Action(() => { TB_send_1.AppendText(Str[1]); }));  //发送信息的全明文
             this.Dispatcher.Invoke(new Action(() => { TB_recv_1.AppendText(Str[0]); }));  //接收信息的全明文
-            this.Dispatcher.Invoke(new Action(() => { TB_key.AppendText(Str[3]); }));
+            this.Dispatcher.Invoke(new Action(() => { TB_key.AppendText(Str[3]+" "); }));
             myClientSocket.Send(sendByte, sendByte.Length, 0);
             //Thread receiveThread = new Thread(ReceiveMessage);
             //receiveThread.Start(connection);

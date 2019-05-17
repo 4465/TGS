@@ -12,7 +12,7 @@
         </Grid.ColumnDefinitions>
         <Button x:Name="Btn_login" Content="打开TGS" HorizontalAlignment="Left" Margin="462,309,0,0" VerticalAlignment="Top" Width="76" Click="Btn_login_Click"></Button>
         <Button Content="新建客户端" HorizontalAlignment="Left" Margin="287,309,0,0" VerticalAlignment="Top" Width="75" />
-        <Label Content="Kerberos认证服务小说阅读器TGS端" HorizontalAlignment="Left" Margin="171,71,0,0" VerticalAlignment="Top" Height="60" Width="393"/>
+        <Label Content="Kerberos认证服务小说阅读器TGS端" HorizontalAlignment="Left" Margin="287,71,0,0" VerticalAlignment="Top" Height="26" Width="277"/>
 
     </Grid>
 </Window>

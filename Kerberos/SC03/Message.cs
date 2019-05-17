@@ -197,6 +197,7 @@ namespace SC03
                     //检查IDtgs是不是自己
                     if (str_IDtgs == "TGS")
                     {
+
                         //构造报文
                         Message msg = new Message();
                         string[] keys = msg.GenerateKeys();
@@ -253,8 +254,10 @@ namespace SC03
         }
 
         //参数为Authenticator报文、Client公钥
-        public string[] Authenticator(string des_key,Byte[] ss)
+        public string[] Authenticator(string IDc,Byte[] ss)
         {
+            string des_key;
+            Dic.myDictionary.TryGetValue(IDc, out des_key);
             //string mess = Encoding.ASCII.GetString(ByteRec);
             string[] data = new string[4];
             Message Msg = new Message();
@@ -266,7 +269,7 @@ namespace SC03
             Console.WriteLine("Authenticator:{0}", msg[1]);
             string msg0 = Msg.Decrypt(msg[0], "ASandTGS");
             string str_des_key = msg0.Substring(0, 8);
-            Console.WriteLine("密钥:{0}", str_des_key);
+            Console.WriteLine("密钥:{0}", des_key);
             //AS与TGS事先约定好的密钥
 
             Console.WriteLine("msg0:{0}", msg0);
