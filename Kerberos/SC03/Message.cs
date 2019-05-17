@@ -216,7 +216,6 @@ namespace SC03
                         Console.WriteLine("票据密文:{0}", m_tkt);
                         //用TGS与V固定的密钥解密TGSyoSER
                         
-                        //Console.WriteLine("票据明文:{0}",msg.Decrypt(m_tkt,TGStoSER))
                         //Console.WriteLine("票据明文:{0}", msg.Decrypt(m_tkt, "TGStoSER"));
 
                         string msg4 = De_msg4_tgs.Substring(0, 31) + m_tkt;

@@ -44,8 +44,8 @@ namespace SC03
             this.key_des_CV = GetRandomString(8);
             Console.WriteLine("TGS生成,C与V共享的密钥:{0}",this.key_des_CV);
             //事先和V约定好的密钥
-            string str_des_CV = "TGStoSER";
-            this.msg4_tkt = Ticket(IDs, str_des_CV, IDc, ADc, lifetime2);
+            
+            this.msg4_tkt = Ticket(IDs, this.key_des_CV, IDc, ADc, lifetime2);
             List<byte> tgsMessage = new List<byte>();
             tgsMessage.AddRange(Encoding.ASCII.GetBytes(this.data_tag.ToString()));
             tgsMessage.AddRange(Encoding.ASCII.GetBytes(this.key_des_CV));  //this.key_des_CV
@@ -67,6 +67,7 @@ namespace SC03
         public byte[] Ticket(string IDs, string Key_C_S, string IDc, string ADc, long lifetime2)
         {
             //Console.WriteLine("IDc:{0}", IDc);
+            string str_des_CV = "TGStoSER";
             List<byte> ticket = new List<byte>();
             ticket.AddRange(msg.StringtoBytes(Key_C_S));
             ticket.AddRange(Encoding.ASCII.GetBytes(IDc));
@@ -78,8 +79,10 @@ namespace SC03
             ticket.AddRange(msg.StringtoBytes(lifetime2.ToString()));
             byte[] Tk = ticket.ToArray();
             string str_Tk = Encoding.ASCII.GetString(Tk);
+            Console.WriteLine("票据v密钥:{0}", Key_C_S);
             //对票据进行加密  key = 12345678这是c和v之间事先约定的密钥，固定不变
-            string En_str_Tk = msg.Encrypt(str_Tk, Key_C_S);//TGStoSER
+            string En_str_Tk = msg.Encrypt(str_Tk, str_des_CV);//TGStoSER
+            Console.WriteLine(msg.Decrypt(En_str_Tk, str_des_CV));
             Tk = Encoding.ASCII.GetBytes(En_str_Tk);
             return Tk;
         }
