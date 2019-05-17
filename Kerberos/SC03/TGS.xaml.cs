@@ -97,11 +97,12 @@ namespace SC03
             //this.Dispatcher.Invoke(new Action(() => { TB_send_1.AppendText(ssmg); }));
             //string sendStr = "40000WXSCd/8k4O7b8v2WbUJ+RGOuO/n4TD2S4adxWheNocrnQfkEfEtOkvlRochjKvOgVG7vILx0bKQEDTaDylPHTEioKwxy4oX2lsswZKKoy4aBOWEcepwPn9itkq7l0OE4VxXPH1PsMsjB8uxn2F9MXg == ";
             string[] Str = msg.Authenticator(result);
-            string sendStr = Str[2];       //发送消息全秘闻
+            string sendStr = Str[2];       //发送消息全秘文
             byte[] sendByte = Encoding.ASCII.GetBytes(sendStr);
             this.Dispatcher.Invoke(new Action(() => { TB_send_2.AppendText(sendStr); }));
             this.Dispatcher.Invoke(new Action(() => { TB_send_1.AppendText(Str[1]); }));  //发送信息的全明文
             this.Dispatcher.Invoke(new Action(() => { TB_recv_1.AppendText(Str[0]); }));  //接收信息的全明文
+            this.Dispatcher.Invoke(new Action(() => { TB_key.AppendText(Str[3]); }));
             myClientSocket.Send(sendByte, sendByte.Length, 0);
             //Thread receiveThread = new Thread(ReceiveMessage);
             //receiveThread.Start(connection);

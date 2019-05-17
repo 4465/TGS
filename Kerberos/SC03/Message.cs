@@ -286,7 +286,7 @@ namespace SC03
             //发送信息的全秘文
             data[2] = Msg.DeMsgFromClient(data[0])[2];
             //data[2] = "";
-            //data[3] = Msg.DeMsgFromClient(data[0])[3];
+            data[3] = Msg.DeMsgFromClient(data[0])[3];
             return data;
         }
     }
