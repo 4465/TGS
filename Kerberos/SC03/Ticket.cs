@@ -22,6 +22,7 @@ namespace SC03
         //生成报文，Key_tgs解析报文所得，是C与TGS共享的会话密钥，加密整个报文
         public TGSMessage(string Key_tgs, string IDs, DateTime TS4, string IDc, string ADc, long lifetime2)
         {
+            Console.WriteLine(IDc + "构造报文1");
             this.type = "04";
             this.msg4_password = "0000";
             List<byte> tgsMessage = new List<byte>();
@@ -31,11 +32,13 @@ namespace SC03
             tgsMessage.AddRange(Encoding.ASCII.GetBytes(this.msg4_password.ToString()));
             tgsMessage.AddRange(message);
             byte[] Tk = tgsMessage.ToArray();
+            Console.WriteLine(IDc + "构造报文成功");
             this.msg4_tgs = Tk;
         }
         //生成报文数据段，Key_C_TGS解析报文所得，有Ticket()传参所得，是C与TGS共享的会话密钥，加密整个报文
         public byte[] Message_4(string Key_C_TGS, string IDs, DateTime TS4, string IDc, string ADc, long lifetime2)
         {
+            Console.WriteLine(IDc + "构造报文2");
             this.data_tag = "04";
             this.msg4_IDs = msg.StringtoBytes(IDs);
             this.msg4_TS4 = msg.StringtoBytes(TS4.ToString("yyyy/MM/dd HH:mm:ss"));
@@ -60,12 +63,14 @@ namespace SC03
             //整个报文加密，key=12345678这是AS生成的，C和TGS之间共享的会话密钥 通过解析Ticket_tgs票据获得
             string En_str_Tk = msg.Encrypt(str_Tk, Key_C_TGS);
             Tk = Encoding.ASCII.GetBytes(En_str_Tk);
+            Console.WriteLine(IDc + "构造报文2成功");
             return Tk;
         }
 
         //服务器密码加密  key = TGSandS_
         public byte[] Ticket(string IDs, string Key_C_S, string IDc, string ADc, long lifetime2)
         {
+            Console.WriteLine(IDc + "构造票据");
             //Console.WriteLine("IDc:{0}", IDc);
             string str_des_CV = "TGStoSER";
             List<byte> ticket = new List<byte>();
@@ -84,6 +89,7 @@ namespace SC03
             string En_str_Tk = msg.Encrypt(str_Tk, str_des_CV);//TGStoSER
             //Console.WriteLine(msg.Decrypt(En_str_Tk, str_des_CV));
             Tk = Encoding.ASCII.GetBytes(En_str_Tk);
+            Console.WriteLine(IDc + "构造票据成功");
             return Tk;
         }
 

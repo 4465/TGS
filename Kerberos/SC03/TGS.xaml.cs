@@ -31,13 +31,13 @@ namespace SC03
             this.port = 9000;
         }
 
-        public string get_remote_ip()
-        {
-            connection = listener.AcceptSocket();
-            //在新线程中启动新的socket连接，每个socket等待，并保持连接
-            IPEndPoint iprm = (IPEndPoint)connection.RemoteEndPoint;
-            return iprm.Address.ToString();
-        }
+        //public string get_remote_ip()
+        //{
+        //    connection = listener.AcceptSocket();
+        //    //在新线程中启动新的socket连接，每个socket等待，并保持连接
+        //    IPEndPoint iprm = (IPEndPoint)connection.RemoteEndPoint;
+        //    return iprm.Address.ToString();
+        //}
 
         //侦听客户连接请求
         public void runTGS()
@@ -63,8 +63,7 @@ namespace SC03
             IPEndPoint iprm = (IPEndPoint)connection.RemoteEndPoint;
             this.Dispatcher.Invoke(new Action(() => { TB_log.AppendText("准备接受消息！\n"); }));
             Thread receiveThread = new Thread(ReceiveMessage);
-            receiveThread.Start(connection);
-           
+            receiveThread.Start(connection); 
         }
 
 
@@ -78,7 +77,6 @@ namespace SC03
                 {
                     //通过clientsocket接收数据
                     int num = myClientSocket.Receive(result);
-                    Thread.Sleep(1000);
                     this.Dispatcher.Invoke(new Action(() => { TB_recv_2.AppendText(Encoding.ASCII.GetString(result, 0, num)); }));
                     Console.WriteLine("result：{0}", Encoding.ASCII.GetString(result));
                     //System.Windows.MessageBox.Show(Encoding.ASCII.GetString(result));
@@ -137,6 +135,8 @@ namespace SC03
             Console.WriteLine("密钥:{0}", str_des_key);
             string Aut = Msg.Decrypt(msg[1], str_des_key);
             string IDc = Aut.Substring(0, 3);
+            //string[] tail = Regex.Split(Aut, "####", RegexOptions.IgnoreCase);
+            //string ADc = tail[1];
             if (!Dic.myDictionary.ContainsKey(IDc))
             {
                 Dic.myDictionary.Add(IDc, str_des_key);
@@ -152,7 +152,7 @@ namespace SC03
             }
             string[] Str = Msg.Authenticator(IDc,result);
             Socket myClientSocket = (Socket)clientSocket;
-            IPEndPoint iprm = (IPEndPoint)connection.RemoteEndPoint;
+            
             //this.Dispatcher.Invoke(new Action(() => { TB_send_1.AppendText(ssmg); }));
             //string sendStr = "40000WXSCd/8k4O7b8v2WbUJ+RGOuO/n4TD2S4adxWheNocrnQfkEfEtOkvlRochjKvOgVG7vILx0bKQEDTaDylPHTEioKwxy4oX2lsswZKKoy4aBOWEcepwPn9itkq7l0OE4VxXPH1PsMsjB8uxn2F9MXg == ";
             
@@ -163,9 +163,10 @@ namespace SC03
             this.Dispatcher.Invoke(new Action(() => { TB_recv_1.AppendText(Str[0]); }));  //接收信息的全明文
             this.Dispatcher.Invoke(new Action(() => { TB_key.AppendText(Str[3]+" "); }));
             myClientSocket.Send(sendByte, sendByte.Length, 0);
+            
             //Thread receiveThread = new Thread(ReceiveMessage);
             //receiveThread.Start(connection);
-            //myClientSocket.Close();
+            myClientSocket.Close();
         }
 
 

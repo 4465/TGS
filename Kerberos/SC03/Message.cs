@@ -160,23 +160,24 @@ namespace SC03
             string str_TS3 = str_TS2;
             string str_Aut = str_Aut_IDc + str_ADc + str_TS3;
             //打印消息头
-            Console.WriteLine("Type:{0}", str_type);
-            Console.WriteLine("pwd:{0}", str_pwd);
-            Console.WriteLine("Tag:{0}", str_tag);
-            Console.WriteLine("IDs:{0}", str_IDs);
-            //打印ticket
-            Console.WriteLine("访问TGS的票据:{0}", tkt);
-            Console.WriteLine("C与TGS共享的会话密钥:{0}", str_des_key);
-            Console.WriteLine("IDc:{0}", str_IDc);
-            Console.WriteLine(str_ADC_tkt);
-            Console.WriteLine("TGS的ID:{0}", str_IDtgs);
-            Console.WriteLine("TS2:{0}", str_TS2);
-            Console.WriteLine("生命周期:{0}", str_lifetime1);
-            //打印消息尾
-            Console.WriteLine("签名:{0}", str_Aut);
-            Console.WriteLine("IDc:{0}", str_Aut_IDc);
-            Console.WriteLine("ADc:{0}", str_ADc);
-            Console.WriteLine("TS3:{0}", str_TS3);
+            //Console.WriteLine("Type:{0}", str_type);
+            //Console.WriteLine("pwd:{0}", str_pwd);
+            //Console.WriteLine("Tag:{0}", str_tag);
+            //Console.WriteLine("IDs:{0}", str_IDs);
+            ////打印ticket
+            //Console.WriteLine("访问TGS的票据:{0}", tkt);
+            //Console.WriteLine("C与TGS共享的会话密钥:{0}", str_des_key);
+            //Console.WriteLine("IDc:{0}", str_IDc);
+            //Console.WriteLine(str_ADC_tkt);
+            //Console.WriteLine("TGS的ID:{0}", str_IDtgs);
+            //Console.WriteLine("TS2:{0}", str_TS2);
+            //Console.WriteLine("生命周期:{0}", str_lifetime1);
+            ////打印消息尾
+            //Console.WriteLine("签名:{0}", str_Aut);
+            //Console.WriteLine("IDc:{0}", str_Aut_IDc);
+            //Console.WriteLine("ADc:{0}", str_ADc);
+            //Console.WriteLine("TS3:{0}", str_TS3);
+            Message msg = new Message();
             string[] data = new string[4];
             data[0] = "";
             data[1] = "";
@@ -188,22 +189,24 @@ namespace SC03
             DateTime TS2 = DateTime.Parse(str_TS2);
             if (DateTime.Compare(TS2.AddSeconds(lifetime1), DateTime.Now) > 0)
             {
+                Console.WriteLine("比较TS2");
                 //TS2判断消息有效,解密签名，暂用str_Aut代表解密后的签名
                 //string Authenticator = De_Authenticator()
                 //完成TGS与Client同步
                 DateTime TS3 = DateTime.Parse(str_TS3);
                 if (DateTime.Compare(TS3.AddSeconds(lifetime1), DateTime.Now) > 0)
                 {
+                    Console.WriteLine("比较TS3");
                     //检查IDtgs是不是自己
                     if (str_IDtgs == "TGS")
                     {
-
+                        Console.WriteLine("比较IDtgs");
                         //构造报文
-                        Message msg = new Message();
-                        string[] keys = msg.GenerateKeys();
+                      
                         DateTime TS4 = DateTime.Now;
                         long lifetime = 1000;
                         //string key = "asdf4568";
+                        Console.WriteLine("开始构造报文");
                         TGSMessage tgs = new TGSMessage(str_des_key, str_IDs, TS4, str_IDc, str_ADc, lifetime);
                         Console.WriteLine("确认成功");
                         Console.WriteLine("TGS发送给Client密文:{0}", Encoding.ASCII.GetString(tgs.msg4_tgs));
@@ -216,9 +219,7 @@ namespace SC03
                         string m_tkt = De_msg4_tgs.Substring(32, De_msg4_tgs.Length - 32);
                         Console.WriteLine("票据密文:{0}", m_tkt);
                         //用TGS与V固定的密钥解密TGSyoSER
-
                         //Console.WriteLine("票据明文:{0}", msg.Decrypt(m_tkt, "TGStoSER"));
-
                         string msg4 = De_msg4_tgs.Substring(0, 31) + m_tkt;
                         string str_msg4 = Encoding.ASCII.GetString(tgs.msg4_tgs);
                         data[1] = msg4;   //message4全明文
@@ -256,6 +257,11 @@ namespace SC03
         //参数为Authenticator报文、Client公钥
         public string[] Authenticator(string IDc,Byte[] ss)
         {
+
+            foreach (KeyValuePair<string, string> kvp in Dic.myDictionary)
+            {
+                Console.WriteLine("字典IDc：{0},字典值：{1}", kvp.Key, kvp.Value);
+            }
             string des_key;
             Dic.myDictionary.TryGetValue(IDc, out des_key);
             //string mess = Encoding.ASCII.GetString(ByteRec);
@@ -265,8 +271,8 @@ namespace SC03
             string message = mess.Substring(11, mess.Length - 11);
             Console.WriteLine(message);
             string[] msg = Regex.Split(message, "####", RegexOptions.IgnoreCase);
-            Console.WriteLine("Tickt_tgs:{0}", msg[0]);
-            Console.WriteLine("Authenticator:{0}", msg[1]);
+            Console.WriteLine("Tickt_tgs1:{0}", msg[0]);
+            Console.WriteLine("Authenticator1:{0}", msg[1]);
             string msg0 = Msg.Decrypt(msg[0], "ASandTGS");
             string str_des_key = msg0.Substring(0, 8);
             Console.WriteLine("密钥:{0}", des_key);
