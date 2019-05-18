@@ -82,7 +82,7 @@ namespace SC03
             Console.WriteLine("票据v密钥:{0}", Key_C_S);
             //对票据进行加密  key = 12345678这是c和v之间事先约定的密钥，固定不变
             string En_str_Tk = msg.Encrypt(str_Tk, str_des_CV);//TGStoSER
-            Console.WriteLine(msg.Decrypt(En_str_Tk, str_des_CV));
+            //Console.WriteLine(msg.Decrypt(En_str_Tk, str_des_CV));
             Tk = Encoding.ASCII.GetBytes(En_str_Tk);
             return Tk;
         }
